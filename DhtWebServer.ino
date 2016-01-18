@@ -57,37 +57,12 @@ void writeFile(unsigned long longTime, float h, float t)
       Serial.print(";");
       Serial.println(t);
       
-      if(!SPIFFS.exists(fileName))
-      {
-        File valuesFile = SPIFFS.open(fileName, "w");
-        valuesFile.close();
-      }
-      
-      File valuesFile = SPIFFS.open(fileName, "r+");
+      File valuesFile = SPIFFS.open(fileName, "a");
       if (!valuesFile) {
           Serial.println("file open failed");
       }
       else
       {
-        valuesFile.seek(0, SeekSet);
-        valuesFile.find("\r\n");
-        size_t offSet = valuesFile.position();
-        if(valuesFile.size() >= offSet * maxDataPoints)
-        {
-          int buf;
-          while ((buf = valuesFile.read()) != EOF)
-          {
-            valuesFile.seek(-1, SeekCur);
-            valuesFile.seek(offSet * -1, SeekCur);
-            valuesFile.write(buf);
-            valuesFile.seek(offSet, SeekCur);
-          }
-          valuesFile.seek(offSet * -1, SeekCur);
-        }
-        else
-        {
-          valuesFile.seek(valuesFile.size(), SeekSet);
-        }
         valuesFile.print(longTime);
         valuesFile.print(";");
         valuesFile.print(h);
@@ -128,8 +103,7 @@ void loop() {
     float h = dht.readHumidity();
     float t = dht.readTemperature();
 
-    if(h != lastHumidity ||
-        t != lastTemperature)
+    if(!isnan(h) && !isnan(t) && (h != lastHumidity || t != lastTemperature))
     {      
       writeFile(timeClient.getRawTime(), h, t);
             
