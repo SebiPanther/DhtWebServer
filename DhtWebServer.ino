@@ -72,7 +72,6 @@ unsigned long findlastPosition()
     {
       String curValues = valuesFile.readStringUntil('\n');
       char buf[11];
-      Serial.println(curValues);
       curValues.substring(0, 10).toCharArray(buf, 11);
       unsigned long longTime = strtoul(buf, '\0', 10);
       if (maxTicks <= longTime)
@@ -85,6 +84,8 @@ unsigned long findlastPosition()
     maxLine++;
   }
   valuesFile.close();
+  Serial.print("Start Position: ");
+  Serial.println(maxLine);
   return maxLine;
 }
 
@@ -167,9 +168,9 @@ void setup() {
 
 void loop() {
   server.handleClient();
+  timeClient.update();
   if ((lastTimeMeasured + 5000) < millis())
   {
-    timeClient.update();
 
     float h = dht.readHumidity();
     float t = dht.readTemperature();
