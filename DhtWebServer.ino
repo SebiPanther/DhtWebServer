@@ -68,6 +68,7 @@ void handleCsv() {
 			client.print(";");
 			client.println(dataPoint.Temperature);
 		}
+		client.flush();
 	}
 	dataPoints.close();
 }
@@ -131,6 +132,7 @@ void handleJson() {
 			}
 		}
 		client.println("]");
+		client.flush();
 	}
 	dataPoints.close();
 }
